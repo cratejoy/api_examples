@@ -18,7 +18,7 @@ import requests
 
 
 def mark_as_shipped(auth, shipment_id,
-                    base_url='http://api.cratejoy.com/v1/'):
+                    base_url='https://api.cratejoy.com/v1/'):
     """
         Mark all of the shipment_ids as shipped
         using the Cratejoy API.
