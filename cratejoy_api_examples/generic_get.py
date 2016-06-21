@@ -41,10 +41,6 @@ def get_auth(client_id='test'):
             return tuple(line.rstrip('\n').split(' '))
 
 
-"""
-These functions are the foundational request infrastructure.
-"""
-
 def get(endpoint, subrelations=None, limit=25, page=1, print_results=True):
     url = "{}{}?".format(base_url, endpoint)
     if subrelations:
@@ -62,6 +58,7 @@ def get(endpoint, subrelations=None, limit=25, page=1, print_results=True):
     if print_results:
         print "Response:\n{}\n----".format(response.content)
     return response
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
