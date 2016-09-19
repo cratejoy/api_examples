@@ -2,15 +2,7 @@
 This command-line utility demonstrates how to add a basic 301 or 302 redirect
 to your store.
 
-
-From a high level, it's very straight-forward. 
-Just loop through a list of shipment ids, using a 
-PUT request to update the "status" field for each, 
-using the http://api.cratejoy.com/v1/shipments/<shipment_id> 
-endpoint.
-
 Usage: python add_redirect.py --user luca --pw password --redirect_type 301 --origin /fun --target /work
-
 """
 
 import json
