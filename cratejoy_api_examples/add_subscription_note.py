@@ -1,7 +1,7 @@
 """
 This command-line utility demonstrates how to add a subscription note.
 
-Usage: python ./add_subscripition_note.py --id=12345678 --note="This subscription is noteworthy." --user=luca --pw=password
+Usage: python ./add_subscription_note.py --id=12345678 --note="This subscription is noteworthy." --user=luca --pw=password
 
 Note: This will overwrite any existing subscription note.
 """
