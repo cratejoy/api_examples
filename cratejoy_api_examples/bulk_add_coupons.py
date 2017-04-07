@@ -1,6 +1,6 @@
 """
 This command-line utility demonstrates how to bulk add
-a coupon to a list of shipments in a text file with
+a coupon to a list of subscriptions in a text file with
 the Cratejoy API.
 From a high level, it's very straight-forward.
 Just loop through a list of subscription ids, using a
