@@ -7,7 +7,7 @@ Just loop through a list of subscription ids, using a
 POST request to add the coupon for each,
 using the https://api.cratejoy.com/v1/subscriptions/{sub_id}/coupons/
 endpoint.
-Usage: python bulk_mark_as_shipped.py --user blake --pw password --coupon_id coupon_id --subscription_ids_file /documents/file.txt
+Usage: python bulk_add_coupons.py --user blake --pw password --coupon_id coupon_id --subscription_ids_file /documents/file.txt
 """
 
 import json
