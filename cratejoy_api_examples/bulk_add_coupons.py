@@ -17,7 +17,7 @@ import time
 
 def bulk_add_coupon(auth, file_name, coupon_id, base_url='https://api.cratejoy.com/v1/'):
     """
-        Mark all of the shipment_ids as shipped
+        Add a coupon to all of the subscriptions_Ids
         using the Cratejoy API.
     """
 
