@@ -1,0 +1,133 @@
+{#
+	This is an example html/customer/edit.html from our "Bold" theme (old designer).
+
+	If a subscription has a survey associated with it, it will be displayed at the bottom of the page, and it will use Javascript to post updates to the answers to the store API.
+#}
+{% extends "base.html" %}
+{%- macro print_survey(survey_result) -%}
+	<form autocomplete="off" id="{{ survey_result.id }}" class="survey">
+		{%- for answer in survey_result.answers|sort -%}
+			<div>
+				<span class="question">{{ answer.field.name }}</span>
+                <div class="survey_field" id="{{ answer.field.id }}">
+                    {%- if answer.field.type == 0 -%}
+                        {{ checkboxes_field(survey, answer) }}
+                    {%- elif answer.field.type == 1 -%}
+                        {{ text_field(survey, answer) }}
+                    {%- elif answer.field.type == 2 -%}
+                        {{ paragraph_field(survey, answer) }}
+                    {%- elif answer.field.type == 3 -%}
+                        {{ multi_choice_field(survey, answer) }}
+                    {%- elif answer.field.type == 4 -%}
+                        {{ checkboxes_field(survey, answer) }}
+                    {%- elif answer.field.type == 5 -%}
+                        {{ date_field(survey, answer) }}
+                    {%- endif -%}
+	            </div>
+			</div>
+		{%- endfor -%}
+	</form>
+{%- endmacro -%}
+
+{%- macro text_field(survey, answer) -%}
+	<input type="text" id="{{ answer.field.id }}" name="{{ answer.id }}" value="{{ answer.value or '' }}" class="form-control" />
+{%- endmacro -%}
+
+{%- macro paragraph_field(survey, answer) -%}
+	<textarea id="{{ answer.field.id }}" name="{{ answer.id }}" class="form-control">{{ answer.value or '' }}</textarea>
+{%- endmacro -%}
+
+{%- macro multi_choice_field(survey, answer) -%}
+	{%- for option in answer.field.options|sort -%}
+	<div class="radio option">
+		<label for="{{ option.id }}" name="{{ option.slug }}">
+			<input type="radio" id="{{ answer.id }}" name="{{ answer.field.id }}" value="{{ option.value }}" {%- if option.value == answer.value -%}checked=checked{%- endif -%} />
+			{{ option.value }}
+		</label>
+	</div>
+	{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro checkboxes_field(survey, answer) -%}
+	{%- set checked = answer.value.split('|') -%}
+	{%- for option in answer.field.options|sort -%}
+	<div class="multiple_choice_field">
+		<label for="{{ option.id }}" name="{{ option.slug }}" class="checkbox option">
+			<input type="checkbox" id="{{ option.id }}" name="{{ answer.field.id }}" value="{{ option.value }}" {%- if option.value in checked -%}checked=checked{%- endif -%} />
+			{{ option.value }}
+		</label>
+	</div>
+	{%- endfor -%}
+{%- endmacro -%}
+
+{%- macro date_field(survey, answer) -%}
+	<input type="date" id="{{ answer.field.id }}" name="{{ answer.id }}" class="form-control" value="{{ answer.value or ''}}" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" placeholder="MM/DD/YYYY" />
+{%- endmacro -%}
+
+{% block page_content %}
+<div class="form-feedback error-container">{%- if result -%}<p>{{ result }}</p>{%- endif -%}</div>
+{% if sub and sub.surveys|length > 0 %}
+<script>
+	var get_checkbox_value = function() {
+		return this.value;
+	};
+	function save_survey() {
+		var subscription_id = {{ sub.id }};
+		$("form[class='survey']").each(function(index) {
+			var survey_id = this.id;
+			var survey_answers = {}
+            console.log('Compiling answers for survey ' + survey_id);
+			$(this).find('div[class="survey_field"]').each(function(index) {
+              	var field_id = this.id
+              	var answer = $(this).find('input')[0];
+				if(answer == undefined) {
+					answer = $(this).find('textarea')[0];
+                }
+	            if(answer.type == 'checkbox' || answer.type == 'radio') { // Multiple choice, checkboxes, or boolean
+					val = $(this).find('input:checked[name="' + field_id + '"]').map(get_checkbox_value).get().join('|');
+				} else {
+					val = $(answer).val();
+				}
+				survey_answers[field_id] = val;
+			});
+            console.log(survey_answers);
+			$.ajax({
+				url: '/v1/store/api/subscriptions/' + subscription_id + '/surveys/' + survey_id,
+				contentType: 'application/json',
+				data: JSON.stringify({"answers": survey_answers}),
+				dataType: 'json',
+				type: 'PUT'
+			});
+        });
+		return
+	}
+</script>
+{% endif %}
+<div class="container form-container my-account">
+	<div class="row">	
+		<div class="col-lg-8 col-lg-offset-2">
+			{{ customer_helper.edit_basic_account_info() }}
+			{{ customer_helper.edit_payment_info() }}
+			{{ customer_helper.edit_address_info() }}
+		</div>
+	</div>
+</div>
+{% if sub and sub.surveys|length > 0 %}
+<div class="panel panel-cratejoy">
+	<div class="panel-heading">
+		<h3 class="panel-title">Update Survey Answers</h3>
+	</div>
+	{% for survey_result in sub.surveys %}
+		{{ print_survey(survey_result) }}
+	{% endfor %}
+
+	<div class="panel-footer ">
+		<div class="row">
+			<div class="col-lg-12 col-xs-12">
+				<span class="btn btn-large btn-primary pull-right cj-edit-survey_info" onclick="save_survey()">Save</span>
+			</div>
+		</div>
+	</div>
+</div>
+{% endif %}
+{% endblock %}
