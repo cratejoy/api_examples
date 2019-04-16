@@ -28,7 +28,7 @@ import datetime
 base_url = 'http://api.cratejoy.com/v1/shipments/{}/'
 
 shipped_at = datetime.datetime.utcnow()
-shipped_at = shipped_at.strftime('%Y-%m-%d')
+shipped_at = shipped_at.strftime('%Y-%m-%dT%H:%M:%SZ')
 
 
 def put_tracking(sid, tracking_number, counter, auth, mark_shipped=False):
